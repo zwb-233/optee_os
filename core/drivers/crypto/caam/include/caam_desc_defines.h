@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: BSD-2-Clause */
 /*
- * Copyright 2018-2021 NXP
+ * Copyright 2018-2021, 2023 NXP
  *
  * Brief   CAAM Descriptor defines.
  */
@@ -325,6 +325,26 @@
 #define PROT_RSA_KEY_ALL	0
 #define PROT_RSA_KEY_N_D	2
 
+#define PROT_RSA_FINISH_KEY_ENC_OUT(alg) PROT_RSA_FINISH_KEY_ENC_OUT_##alg
+#define PROT_RSA_FINISH_KEY_ENC_OUT_ECB	 BIT32(6)
+#define PROT_RSA_FINISH_KEY_ENC_OUT_CCM	 BIT32(6)
+
+#define PROT_RSA_FINISH_KEY_ENC(alg) PROT_RSA_FINISH_KEY_ENC_##alg
+#define PROT_RSA_FINISH_KEY_ENC_ECB  0
+#define PROT_RSA_FINISH_KEY_ENC_CCM  BIT32(4)
+
+#define PROT_RSA_FINISH_KEY(alg) PROT_RSA_FINISH_KEY_##alg
+#define PROT_RSA_FINISH_KEY_NONE 0
+#define PROT_RSA_FINISH_KEY_ECB (PROT_RSA_FINISH_KEY_ENC_OUT_ECB | \
+				 PROT_RSA_FINISH_KEY_ENC_ECB)
+#define PROT_RSA_FINISH_KEY_CCM (PROT_RSA_FINISH_KEY_ENC_OUT_CCM | \
+				 PROT_RSA_FINISH_KEY_ENC_CCM)
+
+#define PROT_RSA_KEY_ENC(format) SHIFT_U32((PROT_RSA_KEY_ENC_##format) & 0x3, 8)
+#define PROT_RSA_KEY_ENC_NONE	 0
+#define PROT_RSA_KEY_ENC_ECB	 1
+#define PROT_RSA_KEY_ENC_CCM	 3
+
 /*
  * ECC Protocol Information
  */
@@ -334,6 +354,16 @@
 #define PROT_PK_TYPE(type)	SHIFT_U32(PROT_PK_##type, 1)
 #define PROT_PK_DL		0
 #define PROT_PK_ECC		1
+#define PROT_PRI_ENC(alg)	PROT_PRI_ENC_##alg
+#define PROT_PRI_ENC_ECB	BIT32(2)
+#define PROT_PRI_ENC_CCM	BIT32(2)
+#define PROT_PRI_EXT(type)	PROT_PRI_EXT_##type
+#define PROT_PRI_EXT_ECB	0
+#define PROT_PRI_EXT_CCM	BIT32(4)
+#define PROT_PRI(alg)		PROT_PRI_##alg
+#define PROT_PRI_NONE		0
+#define PROT_PRI_ECB		(PROT_PRI_ENC(ECB) | PROT_PRI_EXT(ECB))
+#define PROT_PRI_CCM		(PROT_PRI_ENC(CCM) | PROT_PRI_EXT(CCM))
 
 /*
  * BLOB Protocol Information

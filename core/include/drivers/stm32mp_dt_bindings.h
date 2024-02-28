@@ -18,4 +18,9 @@
 #include <dt-bindings/reset/stm32mp1-resets.h>
 #endif
 
+#ifdef CFG_STM32MP25
+#include <dt-bindings/firewall/stm32mp25-rif.h>
+#include <dt-bindings/firewall/stm32mp25-rifsc.h>
+#endif
+
 #endif /* __DRIVERS_STM32MP_DT_BINDINGS_H */

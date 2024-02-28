@@ -17,9 +17,15 @@
 # (CFG_* variables only).
 
 # Cross-compiler prefix and suffix
+ifeq ($(ARCH),arm)
 CROSS_COMPILE ?= arm-linux-gnueabihf-
-CROSS_COMPILE32 ?= $(CROSS_COMPILE)
 CROSS_COMPILE64 ?= aarch64-linux-gnu-
+endif
+ifeq ($(ARCH),riscv)
+CROSS_COMPILE ?= riscv-linux-gnu-
+CROSS_COMPILE64 ?= riscv64-linux-gnu-
+endif
+CROSS_COMPILE32 ?= $(CROSS_COMPILE)
 COMPILER ?= gcc
 
 # For convenience
@@ -703,13 +709,6 @@ CFG_CORE_LARGE_PHYS_ADDR ?= n
 # Set this to a lower value to reduce the TA memory footprint.
 CFG_TA_BIGNUM_MAX_BITS ?= 2048
 
-# Define the maximum size, in bits, for big numbers in the TEE core (privileged
-# layer).
-# This value is an upper limit for the key size in any cryptographic algorithm
-# implemented by the TEE core.
-# Set this to a lower value to reduce the memory footprint.
-CFG_CORE_BIGNUM_MAX_BITS ?= 4096
-
 # Not used since libmpa was removed. Force the values to catch build scripts
 # that would set = n.
 $(call force,CFG_TA_MBEDTLS_MPI,y)
@@ -1149,3 +1148,13 @@ CFG_DRIVERS_REMOTEPROC ?= n
 # CFG_REMOTEPROC_PTA, when enabled, embeds remote processor management PTA
 # service.
 CFG_REMOTEPROC_PTA ?= n
+
+# When enabled, CFG_WIDEVINE_HUK uses the widevine HUK provided by secure
+# DTB as OP-TEE HUK.
+CFG_WIDEVINE_HUK ?= n
+$(eval $(call cfg-depends-all,CFG_WIDEVINE_HUK,CFG_DT))
+
+# When enabled, CFG_WIDEVINE_PTA embeds a PTA that exposes the keys under
+# DT node "/options/op-tee/widevine" to some specific TAs.
+CFG_WIDEVINE_PTA ?= n
+$(eval $(call cfg-depends-all,CFG_WIDEVINE_PTA,CFG_DT CFG_WIDEVINE_HUK))

@@ -258,8 +258,8 @@ static enum pkcs11_rc set_mandatory_attributes(struct obj_attrs **out,
 	return rc;
 }
 
-static enum pkcs11_rc get_default_value(enum pkcs11_attr_id id, void **value,
-					uint32_t *size)
+static enum pkcs11_rc get_default_value(enum pkcs11_attr_id id __maybe_unused,
+					void **value, uint32_t *size)
 {
 	/* should have been taken care of already */
 	assert(!pkcs11_attr_is_boolean(id));
@@ -1643,8 +1643,9 @@ static bool __maybe_unused check_attr_bval(uint32_t proc_id __maybe_unused,
  * @proc_id - PKCS11_CKM_xxx
  * @head - head of the attributes of the to-be-created object.
  */
-enum pkcs11_rc check_created_attrs_against_processing(uint32_t proc_id,
-						      struct obj_attrs *head)
+enum pkcs11_rc
+check_created_attrs_against_processing(uint32_t proc_id,
+				       struct obj_attrs *head __maybe_unused)
 {
 	/*
 	 * Processings that do not create secrets are not expected to call
@@ -1944,6 +1945,7 @@ check_parent_attrs_against_processing(enum pkcs11_mechanism_id proc_id,
 	case PKCS11_CKM_AES_CBC:
 	case PKCS11_CKM_AES_CTS:
 	case PKCS11_CKM_AES_CTR:
+	case PKCS11_CKM_AES_GCM:
 	case PKCS11_CKM_AES_CMAC:
 	case PKCS11_CKM_AES_CMAC_GENERAL:
 		if (key_class == PKCS11_CKO_SECRET_KEY &&

@@ -104,15 +104,22 @@ void release_active_processing(struct pkcs11_session *session)
 	if (!session->processing)
 		return;
 
-	if (session->processing->tee_hash_op_handle != TEE_HANDLE_NULL) {
-		TEE_FreeOperation(session->processing->tee_hash_op_handle);
-		session->processing->tee_hash_op_handle = TEE_HANDLE_NULL;
-		session->processing->tee_hash_algo = 0;
+	switch (session->processing->mecha_type) {
+	case PKCS11_CKM_AES_GCM:
+		tee_release_gcm_operation(session);
+		break;
+	default:
+		break;
 	}
 
 	if (session->processing->tee_op_handle != TEE_HANDLE_NULL) {
 		TEE_FreeOperation(session->processing->tee_op_handle);
 		session->processing->tee_op_handle = TEE_HANDLE_NULL;
+	}
+
+	if (session->processing->tee_op_handle2 != TEE_HANDLE_NULL) {
+		TEE_FreeOperation(session->processing->tee_op_handle2);
+		session->processing->tee_op_handle2 = TEE_HANDLE_NULL;
 	}
 
 	TEE_Free(session->processing->extra_ctx);
